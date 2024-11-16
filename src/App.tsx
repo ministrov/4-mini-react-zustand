@@ -1,5 +1,6 @@
-import './App.css'
+import { getTen } from './helpers/addTen';
 import { useCounterStore } from './model/counterStore'
+import './App.css'
 
 function App() {
   const { counter, increment, decrement } = useCounterStore();
@@ -9,6 +10,7 @@ function App() {
       <button onClick={increment}>+</button>
       <span>{counter}</span>
       <button onClick={decrement}>-</button>
+      <button onClick={getTen}>add 10</button>
     </div>
   )
 }
