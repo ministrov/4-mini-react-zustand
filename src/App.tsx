@@ -1,23 +1,17 @@
 import { useState } from 'react';
-import { TodoState } from './model/todoStore'
 import { Card, Checkbox, Input, Button, Tooltip } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
-// import { getTen } from './helpers/addTen';
-// import { useCounterStore } from './model/counterStore'
+import { TodoType, useTodoStore } from './model/todoStore';
 import './App.css'
 
 function App() {
-  const [todos, setTodos] = useState<TodoState[] | []>([]);
+  const { todos, addTodo, changeIsComplete } = useTodoStore();
   const [value, setValue] = useState<string>('');
-  // const todos: TodoState[] = [];
   // const { counter, increment, decrement } = useCounterStore();
 
-  const addTodo = () => {
-    if (todos.length === 0) {
-      setTodos((prevState) => [...prevState, { id: Math.trunc((Math.random() * 10) + 1), title: value, isCompleted: true }]);
-    } else {
-      // setTodos([item]);
-    }
+  const addTodoItem = () => {
+    addTodo(value);
+    setValue('');
   }
 
   return (
@@ -25,17 +19,14 @@ function App() {
       <div className='wrapper__header'>
         <Input style={{ width: '350px' }} onChange={(e) => setValue(e.target.value)} placeholder='Введите значение' value={value} required />
         <Tooltip title="search">
-          <Button shape="circle" icon={<SearchOutlined />} onClick={addTodo}/>
+          <Button shape="circle" icon={<SearchOutlined />} onClick={addTodoItem} />
         </Tooltip>
       </div>
-      {/* <button onClick={increment}>+</button>
-      <span>{counter}</span>
-      <button onClick={decrement}>-</button>
-      <button onClick={getTen}>add 10</button> */}
+
       <ul className='wrapper__list'>
-        {todos.length > 0 && todos.map((todo: TodoState) => (
+        {todos.length > 0 && todos.map((todo: TodoType, index: number) => (
           <Card key={todo.id} className='card'>
-            <Checkbox checked={todo.isCompleted} />
+            <Checkbox checked={todo.isCompleted} onChange={() => changeIsComplete(index)}/>
             <span>{todo.title}</span>
           </Card>
         ))}
