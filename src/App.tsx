@@ -1,16 +1,38 @@
-import { getTen } from './helpers/addTen';
-import { useCounterStore } from './model/counterStore'
+import { useState } from 'react';
+import { Card, Checkbox, Input, Button, Tooltip } from 'antd';
+import { SearchOutlined } from '@ant-design/icons';
+import { TodoType, useTodoStore } from './model/todoStore';
 import './App.css'
 
 function App() {
-  const { counter, increment, decrement } = useCounterStore();
+  const { todos, addTodo, changeIsComplete } = useTodoStore();
+  const [value, setValue] = useState<string>('');
+  // const { counter, increment, decrement } = useCounterStore();
+
+  const addTodoItem = () => {
+    addTodo(value);
+    setValue('');
+  }
 
   return (
     <div className='wrapper'>
-      <button onClick={increment}>+</button>
-      <span>{counter}</span>
-      <button onClick={decrement}>-</button>
-      <button onClick={getTen}>add 10</button>
+      <div className='wrapper__header'>
+        <Input style={{ width: '350px' }} onChange={(e) => setValue(e.target.value)} placeholder='Введите значение' value={value} required />
+        <Tooltip title="search">
+          <Button shape="circle" icon={<SearchOutlined />} onClick={addTodoItem} />
+        </Tooltip>
+      </div>
+
+      <ul className='wrapper__list'>
+        {todos.length > 0 && todos.map((todo: TodoType, index: number) => (
+          <Card key={todo.id} className='card'>
+            <Checkbox checked={todo.isCompleted} onChange={() => changeIsComplete(index)}/>
+            <span>{todo.title}</span>
+          </Card>
+        ))}
+
+        {todos.length === 0 && <p>Нужно ввести название таски</p>}
+      </ul>
     </div>
   )
 }
