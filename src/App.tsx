@@ -2,28 +2,34 @@
 // import { Card, Checkbox, Input, Button, Tooltip } from 'antd';
 // import { SearchOutlined } from '@ant-design/icons';
 // import { TodoType, useTodoStore } from './model/todoStore';
-import { useEffect, useState } from 'react';
-import Card from 'antd/es/card';
-import Meta from 'antd/es/card';
-import { Rate, Input, Tag } from 'antd';
-import { CoffeeType } from './types/coffeeTypes';
-import { Button } from 'antd/es/radio';
-import { ShoppingCartOutlined } from '@ant-design/icons';
-import { useCoffeeStore } from './model/coffeeStore';
+// import { useEffect, useState } from 'react';
+// import Card from 'antd/es/card';
+// import Meta from 'antd/es/card';
+// import { Rate, Input, Tag } from 'antd';
+// import { CoffeeType } from './types/coffeeTypes';
+// import { Button } from 'antd/es/radio';
+// import { ShoppingCartOutlined } from '@ant-design/icons';
+// import { useCoffeeStore } from './model/coffeeStore';
 import './App.css';
+import { Button } from 'antd';
+import { useCounterStore } from './model/counterStore';
+import { TodoType, useTodoStore } from './model/todoStore';
+import { resetAllStoreStates } from './helpers/create';
 
 function App() {
-  const { coffeeList, getCoffeeList } = useCoffeeStore();
-  const [textValue, setTextValue] = useState<string | undefined>('');
+  const { counter, increment, decrement } = useCounterStore();
+  const { todos, addTodo } = useTodoStore();
+  // const { coffeeList, getCoffeeList } = useCoffeeStore();
+  // const [textValue, setTextValue] = useState<string | undefined>('');
 
-  const handleSearch = (value: string) => {
-    getCoffeeList({ text: value });
-    setTextValue(value);
-  };
+  // const handleSearch = (value: string) => {
+  //   getCoffeeList({ text: value });
+  //   setTextValue(value);
+  // };
 
-  useEffect(() => {
-    getCoffeeList();
-  }, []);
+  // useEffect(() => {
+  //   getCoffeeList();
+  // }, []);
   // const coffeeList: CoffeeType[] | undefined = [];
   // const { todos, addTodo, changeIsComplete } = useTodoStore();
   // const [value, setValue] = useState<string>('');
@@ -50,7 +56,19 @@ function App() {
 
   return (
     <div className='wrapper'>
-      <Input value={textValue} onChange={(e) => handleSearch(e.target.value)} placeholder='Поиск' />
+      <Button onClick={increment}>+</Button>
+      <span>{counter}</span>
+      <Button onClick={decrement}>-</Button>
+      <Button onClick={resetAllStoreStates}>reset</Button>
+
+      <Button onClick={() => addTodo('test')}>add todo</Button>
+
+      {todos?.map((todo: TodoType) => (
+        <div key={todo.id}>
+          <span>{todo.title}</span>
+        </div>
+      ))}
+      {/* <Input value={textValue} onChange={(e) => handleSearch(e.target.value)} placeholder='Поиск' />
       <ul className='wrapper__list cards-list'>
         {coffeeList?.map((coffee: CoffeeType) => (
           <Card key={coffee.id}
