@@ -2,18 +2,24 @@
 // import { Card, Checkbox, Input, Button, Tooltip } from 'antd';
 // import { SearchOutlined } from '@ant-design/icons';
 // import { TodoType, useTodoStore } from './model/todoStore';
+import { useEffect, useState } from 'react';
 import Card from 'antd/es/card';
 import Meta from 'antd/es/card';
-import { Rate, Tag } from 'antd';
+import { Rate, Input, Tag } from 'antd';
 import { CoffeeType } from './types/coffeeTypes';
-import './App.css';
 import { Button } from 'antd/es/radio';
 import { ShoppingCartOutlined } from '@ant-design/icons';
 import { useCoffeeStore } from './model/coffeeStore';
-import { useEffect } from 'react';
+import './App.css';
 
 function App() {
   const { coffeeList, getCoffeeList } = useCoffeeStore();
+  const [textValue, setTextValue] = useState<string | undefined>('');
+
+  const handleSearch = (value: string) => {
+    getCoffeeList({ text: value });
+    setTextValue(value);
+  };
 
   useEffect(() => {
     getCoffeeList();
@@ -44,6 +50,7 @@ function App() {
 
   return (
     <div className='wrapper'>
+      <Input value={textValue} onChange={(e) => handleSearch(e.target.value)} placeholder='Поиск' />
       <ul className='wrapper__list cards-list'>
         {coffeeList?.map((coffee: CoffeeType) => (
           <Card key={coffee.id}
