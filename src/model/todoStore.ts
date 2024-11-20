@@ -21,7 +21,7 @@ const todoSlice: StateCreator<TodoState & TodoActions, [['zustand/devtools', nev
   addTodo: (value: string) => {
     const { todos } = get();
     set(
-      { todos: [...todos, { id: Math.trunc(Math.random() * 10) + 1, title: value, isCompleted: false }]},
+      { todos: [...todos, { id: Math.trunc(Math.random() * 10) + 1, title: value, isCompleted: false }] },
       false,
       `add todo ${value}`
     );
@@ -37,7 +37,8 @@ const todoSlice: StateCreator<TodoState & TodoActions, [['zustand/devtools', nev
     set(
       { todos: newTodo },
       false,
-      `changeIsComplete ${newTodo[index].title} to ${newTodo[index].isCompleted}`)
+      `changeIsComplete ${newTodo[index].title} to ${newTodo[index].isCompleted}`
+    );
   }
 });
 
