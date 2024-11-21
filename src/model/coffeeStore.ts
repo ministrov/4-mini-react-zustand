@@ -1,7 +1,7 @@
 import { create, StateCreator } from "zustand";
 import axios from "axios";
-import { CoffeeType, GetCoffeeListRequestParams, OrderItem } from "../types/coffeeTypes";
-import { devtools } from "zustand/middleware";
+import { CoffeeType, GetCoffeeListRequestParams, OrderCoffeeResponse, OrderItem } from "../types/coffeeTypes";
+import { devtools, persist } from "zustand/middleware";
 
 const BASE_URL = 'https://purpleschool.ru/coffee-api';
 
@@ -20,7 +20,7 @@ type CoffeeActions = {
     setAddress: (address: string) => void;
 };
 
-const coffeeSlice: StateCreator<CoffeeState & CoffeeActions, [['zustand/devtools', never]]> = (set, get) => ({
+const coffeeSlice: StateCreator<CoffeeState & CoffeeActions, [['zustand/devtools', never], ['zustand/persist', unknown]]> = (set, get) => ({
     coffeeList: undefined,
     controller: undefined,
     cart: undefined,
@@ -39,7 +39,21 @@ const coffeeSlice: StateCreator<CoffeeState & CoffeeActions, [['zustand/devtools
     clearCart: () => {
         set({ cart: undefined });
     },
-    orderCoffee: () => { },
+    orderCoffee: async () => {
+        const { cart, address, clearCart } = get();
+        try {
+            const { data } = await axios.post<OrderCoffeeResponse>(`${BASE_URL}/order`, {
+                address,
+                order_items: cart
+            });
+            if (data.success) {
+                alert(data.message);
+                clearCart();
+            }
+        } catch (error) {
+            console.error(error);
+        }
+    },
     setAddress: (address) => {
         set({ address });
     },
@@ -75,4 +89,6 @@ const coffeeSlice: StateCreator<CoffeeState & CoffeeActions, [['zustand/devtools
     },
 });
 
-export const useCoffeeStore = create<CoffeeState & CoffeeActions>()(devtools(coffeeSlice));
+console.log(coffeeSlice);
+
+export const useCoffeeStore = create<CoffeeState & CoffeeActions>()(devtools(persist(coffeeSlice, { name: 'coffeeStore', partialize: (state) => ({ cart: state.cart, address: state.address }) }), { name: 'coffeeStore' }));

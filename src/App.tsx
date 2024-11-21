@@ -17,7 +17,7 @@ import './App.css';
 function App() {
   // const { counter, increment, decrement } = useCounterStore();
   // const { todos, addTodo } = useTodoStore();
-  const { coffeeList, getCoffeeList } = useCoffeeStore();
+  const { coffeeList, getCoffeeList, addCoffeeToCart, cart, clearCart, orderCoffee, address, setAddress } = useCoffeeStore();
   const [textValue, setTextValue] = useState<string | undefined>('');
 
   const handleSearch = (value: string) => {
@@ -29,7 +29,7 @@ function App() {
     getCoffeeList();
   }, []);
 
-  const cart: OrderItem[] = [];
+  // const cart: OrderItem[] = [];
 
   return (
     <div className='wrapper'>
@@ -42,7 +42,7 @@ function App() {
               cover={<img src={coffee.image}
                 alt={coffee.name} />}
               className='cards-list__card'
-              actions={[<Button>{coffee.price} <ShoppingCartOutlined /></Button>]}
+              actions={[<Button onClick={() => addCoffeeToCart(coffee)}>{coffee.price} <ShoppingCartOutlined /></Button>]}
             >
               <Meta title={coffee.name}></Meta>
               <Tag color='magenta' style={{ marginTop: '16px' }}>{coffee.type}</Tag>
@@ -58,9 +58,9 @@ function App() {
             {cart.map((item: OrderItem) => (
               <div key={item.id}>{item.name}</div>
             ))}
-            <Input placeholder='Адрес доставки' />
-            <Button type='primary'>Заказать</Button>
-            <Button>Очистить корзину</Button>
+            <Input value={address} onChange={(e) => setAddress(e.target.value)} placeholder='Адрес доставки' />
+            <Button onClick={orderCoffee} type='primary' disabled={!address}>Заказать</Button>
+            <Button onClick={clearCart}>Очистить корзину</Button>
           </> : <>Корзина пуста</>}
         </aside>
       </div>
