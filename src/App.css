@@ -11,10 +11,14 @@
   gap: 16px;
 }
 
+.wrapper__input {
+  margin-bottom: 24px;
+}
+
 .wrapper__list {
   width: 100%;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(230px, 297px));
+  grid-template-columns: repeat(auto-fill, minmax(200px, 267px));
   gap: 24px;
   margin: 0;
   padding: 0;
