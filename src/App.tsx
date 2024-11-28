@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { Card, Input, Button, Layout, Menu } from 'antd';
 // import { SearchOutlined } from '@ant-design/icons';
 // import { TodoType, useTodoStore } from './model/todoStore';
@@ -11,6 +11,7 @@ import { CoffeeType, OrderItem } from './types/coffeeTypes';
 import { ShoppingCartOutlined } from '@ant-design/icons';
 import { useCoffeeStore } from './model/coffeeStore';
 import './App.css';
+import { useSearchStore } from './model/searchStore';
 // import { useCounterStore } from './model/counterStore';
 // import { TodoType, useTodoStore } from './model/todoStore';
 // import { resetAllStoreStates } from './helpers/create';
@@ -26,12 +27,7 @@ function App() {
   // const { counter, increment, decrement } = useCounterStore();
   // const { todos, addTodo } = useTodoStore();
   const { coffeeList, getCoffeeList, addCoffeeToCart, cart, clearCart, orderCoffee, address, setAddress } = useCoffeeStore();
-  const [textValue, setTextValue] = useState<string | undefined>('');
-
-  const handleSearch = (value: string) => {
-    getCoffeeList({ text: value });
-    setTextValue(value);
-  };
+  const { text, setText } = useSearchStore();
 
   useEffect(() => {
     getCoffeeList();
@@ -62,14 +58,14 @@ function App() {
       </Header>
       <div className='wrapper'>
         <Content style={{ padding: '48px' }}>
-          <Input className='wrapper__input' value={textValue} onChange={(e) => handleSearch(e.target.value)} placeholder='Поиск' />
+          <Input className='wrapper__input' value={text} onChange={(e) => setText(e.target.value)} placeholder='Поиск' />
 
           <div className='wrapper__content'>
             <ul className='wrapper__list cards-list'>
               {coffeeList?.map((coffee: CoffeeType) => (
                 <Card key={coffee.id}
-                  cover={<img src={coffee.image}
-                    alt={coffee.name} />}
+                  // cover={<img src={coffee.image}
+                  //   alt={coffee.name} />}
                   className='cards-list__card'
                   actions={[<Button onClick={() => addCoffeeToCart(coffee)}>{coffee.price} <ShoppingCartOutlined /></Button>]}
                 >
