@@ -12,6 +12,7 @@ import { ShoppingCartOutlined } from '@ant-design/icons';
 import { useCoffeeStore } from './model/coffeeStore';
 import './App.css';
 import { useSearchStore } from './model/searchStore';
+import SkeletonImage from './components/skeletonImage/SkeletonImage';
 // import { useCounterStore } from './model/counterStore';
 // import { TodoType, useTodoStore } from './model/todoStore';
 // import { resetAllStoreStates } from './helpers/create';
@@ -64,8 +65,7 @@ function App() {
             <ul className='wrapper__list cards-list'>
               {coffeeList?.map((coffee: CoffeeType) => (
                 <Card key={coffee.id}
-                  // cover={<img src={coffee.image}
-                  //   alt={coffee.name} />}
+                  cover={<SkeletonImage />}
                   className='cards-list__card'
                   actions={[<Button onClick={() => addCoffeeToCart(coffee)}>{coffee.price} <ShoppingCartOutlined /></Button>]}
                 >
