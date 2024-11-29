@@ -1,0 +1,7 @@
+.category-picker {
+    display: flex;
+    gap: 16px;
+    max-width: fit-content;
+    margin-bottom: 24px;
+    /* background-color: tomato; */
+}

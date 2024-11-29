@@ -21,7 +21,13 @@ export function useUrlStorage<T extends Record<string, string>>(params: T, setPa
 
     useEffect(() => {
         const newQueryParams = new URLSearchParams();
-        params.text && newQueryParams.set('text', params.text);
+        // params.text && newQueryParams.set('text', params.text);
+        Object.keys(params).forEach(key => {
+            const value = params[key];
+            if (value) {
+                newQueryParams.set(key, value);
+            }
+        });
         setQueryParams(newQueryParams)
     }, [params]);
 } 

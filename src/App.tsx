@@ -12,6 +12,7 @@ import './App.css';
 // import { useSearchStore } from './model/searchStore';
 import { useUrlStorage } from './hooks/use-url-storage';
 import MainHeader from './components/mainHeader/MainHeader';
+import CategoryPicker from './components/categoryPicker/CategoryPicker';
 // import { useCounterStore } from './model/counterStore';
 // import { TodoType, useTodoStore } from './model/todoStore';
 // import { resetAllStoreStates } from './helpers/create';
@@ -28,7 +29,7 @@ function App() {
     getCoffeeList(params);
   }, []);
 
-  useUrlStorage(params as any, setParams);
+  useUrlStorage(params, setParams);
 
   // const cart: OrderItem[] = [];
 
@@ -39,6 +40,7 @@ function App() {
         <Content style={{ padding: '48px' }}>
           <Input className='wrapper__input' value={params.text} onChange={(e) => setParams({ text: e.target.value })} placeholder='Поиск' />
 
+          <CategoryPicker />
           <div className='wrapper__content'>
             <ul className='wrapper__list cards-list'>
               {coffeeList?.map((coffee: CoffeeType) => (
