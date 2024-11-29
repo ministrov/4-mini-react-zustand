@@ -1,104 +1,12 @@
-import { create, StateCreator } from "zustand";
-import axios from "axios";
-import { CoffeeType, GetCoffeeListRequestParams, OrderCoffeeResponse, OrderItem } from "../types/coffeeTypes";
+import { create } from "zustand";
+import { GetCoffeeListRequestParams } from "../types/coffeeTypes";
 import { devtools, persist } from "zustand/middleware";
-
-const BASE_URL = 'https://purpleschool.ru/coffee-api';
-
-type CoffeeState = {
-    coffeeList: CoffeeType[] | undefined;
-    controller?: AbortController;
-    cart?: OrderItem[];
-    address?: string;
-    params: GetCoffeeListRequestParams;
-};
-
-type CoffeeActions = {
-    getCoffeeList: (params?: GetCoffeeListRequestParams) => void;
-    addCoffeeToCart: (coffee: CoffeeType) => void;
-    clearCart: () => void;
-    orderCoffee: () => void;
-    setAddress: (address: string) => void;
-    setParams: (params?: GetCoffeeListRequestParams) => void;
-};
-
-const coffeeSlice: StateCreator<CoffeeState & CoffeeActions, [['zustand/devtools', never], ['zustand/persist', unknown]]> = (set, get) => ({
-    coffeeList: undefined,
-    controller: undefined,
-    cart: undefined,
-    address: undefined,
-    params: {
-        text: undefined
-    },
-    setParams: (newParams) => {
-        const { getCoffeeList, params } = get();
-        set({ params: { ...params, ...newParams } }, false, "setParams");
-        getCoffeeList(params);
-    },
-    addCoffeeToCart: (coffee) => {
-        const { cart } = get();
-        const { id, name, subTitle } = coffee;
-        const preparedItem: OrderItem = {
-            id,
-            name: `${name} ${subTitle}`,
-            size: 'L',
-            quantity: 1,
-        };
-        set({ cart: cart ? [...cart, preparedItem] : [preparedItem] });
-    },
-    clearCart: () => {
-        set({ cart: undefined });
-    },
-    orderCoffee: async () => {
-        const { cart, address, clearCart } = get();
-        try {
-            const { data } = await axios.post<OrderCoffeeResponse>(`${BASE_URL}/order`, {
-                address,
-                order_items: cart
-            });
-            if (data.success) {
-                alert(data.message);
-                clearCart();
-            }
-        } catch (error) {
-            console.error(error);
-        }
-    },
-    setAddress: (address) => {
-        set({ address });
-    },
-    getCoffeeList: async (params) => {
-        const { controller } = get();
-
-        if (controller) {
-            controller.abort();
-        }
-
-        const newController = new AbortController();
-        set({ controller: newController });
-
-        const { signal } = newController;
+import { CartActions, CartState, ListActions, ListState } from "./storetypes";
+import { listSlice } from "./listSlice";
+import { cartSlice } from "./cartSlice";
 
 
-        try {
-            const { data } = await axios.get(BASE_URL, { params, signal } as any);
-            set({ coffeeList: data as CoffeeType[] });
-        } catch (error) {
-            // if (axios.isCancel(error)) {
-            //     return;
-            // }
-            console.error(error);
-        }
-        // try {
-        //     const response = await fetch(BASE_URL);
-        //     const data = await response.json();
-        //     return data;
-        // } catch (error) {
-        //     console.error(error);
-        // }
-    },
-});
 
-export const useCoffeeStore = create<CoffeeState & CoffeeActions>()(devtools(persist(coffeeSlice, { name: 'coffeeStore', partialize: (state) => ({ cart: state.cart, address: state.address }) }), { name: 'coffeeStore' }));
+export const useCoffeeStore = create<CartActions & CartState & ListActions & ListState>()(devtools(persist((...arg) => ({ ...listSlice(...arg), ...cartSlice(...arg) }), { name: 'coffeeStore', partialize: (state) => ({ cart: state.cart, address: state.address }) }), { name: 'coffeeStore' }));
 
 export const getCoffeeList = (params?: GetCoffeeListRequestParams) => useCoffeeStore.getState().getCoffeeList(params);
