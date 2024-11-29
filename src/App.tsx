@@ -11,8 +11,9 @@ import { CoffeeType, OrderItem } from './types/coffeeTypes';
 import { ShoppingCartOutlined } from '@ant-design/icons';
 import { useCoffeeStore } from './model/coffeeStore';
 import './App.css';
-import { useSearchStore } from './model/searchStore';
+// import { useSearchStore } from './model/searchStore';
 import SkeletonImage from './components/skeletonImage/SkeletonImage';
+import { useUrlStorage } from './hooks/use-url-storage';
 // import { useCounterStore } from './model/counterStore';
 // import { TodoType, useTodoStore } from './model/todoStore';
 // import { resetAllStoreStates } from './helpers/create';
@@ -27,12 +28,14 @@ const items = new Array(3).fill(null).map((_, index) => ({
 function App() {
   // const { counter, increment, decrement } = useCounterStore();
   // const { todos, addTodo } = useTodoStore();
-  const { coffeeList, getCoffeeList, addCoffeeToCart, cart, clearCart, orderCoffee, address, setAddress } = useCoffeeStore();
-  const { text, setText } = useSearchStore();
+  const { coffeeList, getCoffeeList, addCoffeeToCart, cart, clearCart, orderCoffee, address, setAddress, params, setParams } = useCoffeeStore();
+  // const { text, setText } = useSearchStore();
 
   useEffect(() => {
-    getCoffeeList({ text });
+    getCoffeeList(params);
   }, []);
+
+  useUrlStorage(params as any, setParams);
 
   // const cart: OrderItem[] = [];
 
@@ -59,7 +62,7 @@ function App() {
       </Header>
       <div className='wrapper'>
         <Content style={{ padding: '48px' }}>
-          <Input className='wrapper__input' value={text} onChange={(e) => setText(e.target.value)} placeholder='Поиск' />
+          <Input className='wrapper__input' value={params.text} onChange={(e) => setParams({ text: e.target.value })} placeholder='Поиск' />
 
           <div className='wrapper__content'>
             <ul className='wrapper__list cards-list'>

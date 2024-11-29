@@ -10,6 +10,7 @@ type CoffeeState = {
     controller?: AbortController;
     cart?: OrderItem[];
     address?: string;
+    params: GetCoffeeListRequestParams;
 };
 
 type CoffeeActions = {
@@ -18,6 +19,7 @@ type CoffeeActions = {
     clearCart: () => void;
     orderCoffee: () => void;
     setAddress: (address: string) => void;
+    setParams: (params?: GetCoffeeListRequestParams) => void;
 };
 
 const coffeeSlice: StateCreator<CoffeeState & CoffeeActions, [['zustand/devtools', never], ['zustand/persist', unknown]]> = (set, get) => ({
@@ -25,6 +27,14 @@ const coffeeSlice: StateCreator<CoffeeState & CoffeeActions, [['zustand/devtools
     controller: undefined,
     cart: undefined,
     address: undefined,
+    params: {
+        text: undefined
+    },
+    setParams: (newParams) => {
+        const { getCoffeeList, params } = get();
+        set({ params: { ...params, ...newParams } }, false, "setParams");
+        getCoffeeList(params);
+    },
     addCoffeeToCart: (coffee) => {
         const { cart } = get();
         const { id, name, subTitle } = coffee;
