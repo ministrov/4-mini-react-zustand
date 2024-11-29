@@ -1,34 +1,27 @@
 import { useEffect } from 'react';
-import { Card, Input, Button, Layout, Menu } from 'antd';
+import { Input, Layout } from 'antd';
 // import { SearchOutlined } from '@ant-design/icons';
 // import { TodoType, useTodoStore } from './model/todoStore';
 // import Card from 'antd/es/card';
-import Meta from 'antd/es/card';
-import { Rate, Tag } from 'antd';
-import Logo from './components/logo/Logo';
-import { CoffeeType, OrderItem } from './types/coffeeTypes';
+import CoffeeCard from './components/cofffeeCard/CoffeeCard';
+import Cart from './components/cart/Cart';
+import { CoffeeType } from './types/coffeeTypes';
 // import { Button } from 'antd/es/radio';
-import { ShoppingCartOutlined } from '@ant-design/icons';
 import { useCoffeeStore } from './model/coffeeStore';
 import './App.css';
 // import { useSearchStore } from './model/searchStore';
-import SkeletonImage from './components/skeletonImage/SkeletonImage';
 import { useUrlStorage } from './hooks/use-url-storage';
+import MainHeader from './components/mainHeader/MainHeader';
 // import { useCounterStore } from './model/counterStore';
 // import { TodoType, useTodoStore } from './model/todoStore';
 // import { resetAllStoreStates } from './helpers/create';
 
-const { Header, Content, Footer } = Layout;
-
-const items = new Array(3).fill(null).map((_, index) => ({
-  key: String(index + 1),
-  label: `nav ${index + 1}`,
-}));
+const { Content, Footer } = Layout;
 
 function App() {
   // const { counter, increment, decrement } = useCounterStore();
   // const { todos, addTodo } = useTodoStore();
-  const { coffeeList, getCoffeeList, addCoffeeToCart, cart, clearCart, orderCoffee, address, setAddress, params, setParams } = useCoffeeStore();
+  const { coffeeList, getCoffeeList, params, setParams } = useCoffeeStore();
   // const { text, setText } = useSearchStore();
 
   useEffect(() => {
@@ -41,25 +34,7 @@ function App() {
 
   return (
     <div className='main-page'>
-      <Header style={{
-        position: 'sticky',
-        top: 0,
-        zIndex: 1,
-        width: '100%',
-        display: 'flex',
-        alignItems: 'center',
-        borderRadius: '6px'
-      }}>
-
-        <Logo />
-        <Menu
-          theme={'dark'}
-          mode="horizontal"
-          defaultSelectedKeys={['2']}
-          items={items}
-          style={{ flex: 1, minWidth: 0 }}
-        />
-      </Header>
+      <MainHeader />
       <div className='wrapper'>
         <Content style={{ padding: '48px' }}>
           <Input className='wrapper__input' value={params.text} onChange={(e) => setParams({ text: e.target.value })} placeholder='Поиск' />
@@ -67,33 +42,11 @@ function App() {
           <div className='wrapper__content'>
             <ul className='wrapper__list cards-list'>
               {coffeeList?.map((coffee: CoffeeType) => (
-                <Card key={coffee.id}
-                  cover={<SkeletonImage />}
-                  className='cards-list__card'
-                  actions={[<Button onClick={() => addCoffeeToCart(coffee)}>{coffee.price} <ShoppingCartOutlined /></Button>]}
-                >
-                  <Meta title={coffee.name}></Meta>
-                  <Tag color='magenta' style={{ marginTop: '16px' }}>{coffee.type}</Tag>
-                  <div className="cards-list__description">{coffee.subTitle}</div>
-                  <Rate allowHalf defaultValue={coffee.rating} disabled />
-                </Card>
+                <CoffeeCard key={coffee.id} coffee={coffee} />
               ))}
             </ul>
 
-            <aside className='cart'>
-              <h2>Заказ</h2>
-              {cart && cart.length > 0
-                ?
-                <>
-                  {cart.map((item: OrderItem) => (
-                    <div key={item.id}>{item.name}</div>
-                  ))}
-                  <Input value={address} onChange={(e) => setAddress(e.target.value)} placeholder='Адрес доставки' />
-                  <Button onClick={orderCoffee} type='primary' disabled={!address}>Заказать</Button>
-                  <Button onClick={clearCart}>Очистить корзину</Button>
-                </> : <>Корзина пуста</>
-              }
-            </aside>
+            <Cart />
           </div>
         </Content>
       </div>
